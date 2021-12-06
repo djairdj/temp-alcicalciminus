@@ -4,11 +4,12 @@
  */
 package CalcMinus;
 
-import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import javax.swing.border.LineBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
 
 /**
  *
@@ -26,7 +27,7 @@ public class CalcMinus extends javax.swing.JFrame {
         try{
             Double.parseDouble(numero);
             return true;
-        }catch(Exception e){
+        }catch(NumberFormatException e){
             return false;
         }
     }
@@ -43,18 +44,9 @@ public class CalcMinus extends javax.swing.JFrame {
 
     public double Calc(){
         double numero1 = 0, numero2 = 0;
-        if(IsNumero(txtNum1.getText())){
+        if(IsNumero(txtNum1.getText()) && IsNumero(txtNum2.getText())){
             numero1 = converteNumero(txtNum1.getText());
-            txtNum1.setBorder(new LineBorder(Color.LIGHT_GRAY));           
-        }else{
-            txtNum1.setBorder(new LineBorder(Color.RED));
-        }
-        if(IsNumero(txtNum2.getText())){
             numero2 = converteNumero(txtNum2.getText());
-            txtNum2.setBorder(new LineBorder(Color.LIGHT_GRAY));
-        }else{
-            txtNum2.setBorder(new LineBorder(Color.RED));
-            txtNum2.requestFocus();
         }
         return numero2 - numero1;
     }
@@ -70,17 +62,22 @@ public class CalcMinus extends javax.swing.JFrame {
 
         txtNum1 = new javax.swing.JTextField();
         txtNum2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtResultado = new javax.swing.JTextField();
         jlimagem = new javax.swing.JLabel();
+        txttransferir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocation(new java.awt.Point(0, 0));
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         txtNum1.setToolTipText("Apenas numeros!");
         txtNum1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -104,18 +101,6 @@ public class CalcMinus extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Calcular");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jButton1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jButton1KeyPressed(evt);
-            }
-        });
-
         jLabel1.setText("Resultado");
 
         jLabel2.setText("Quilometros percorridos");
@@ -124,7 +109,8 @@ public class CalcMinus extends javax.swing.JFrame {
 
         jLabel4.setText("KM final");
 
-        txtResultado.setFont(new java.awt.Font("Dialog", 3, 14)); // NOI18N
+        txtResultado.setFont(new java.awt.Font("Dialog", 3, 36)); // NOI18N
+        txtResultado.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtResultado.setToolTipText("Copiar");
         txtResultado.setEnabled(false);
         txtResultado.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -139,6 +125,14 @@ public class CalcMinus extends javax.swing.JFrame {
             }
         });
 
+        txttransferir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/CalcMinus/transferir (1).png"))); // NOI18N
+        txttransferir.setToolTipText("Inverter");
+        txttransferir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txttransferirMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -146,33 +140,32 @@ public class CalcMinus extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(60, 60, 60)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(37, 37, 37)
-                                .addComponent(jLabel3)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtResultado, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(4, 4, 4))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(txtNum1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jlimagem)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtNum2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel3)
+                        .addGap(105, 105, 105)
+                        .addComponent(jLabel4))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(67, 67, 67)
                         .addComponent(jLabel2))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(106, 106, 106)
-                        .addComponent(jButton1)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                        .addGap(19, 19, 19)
+                        .addComponent(txtNum1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jlimagem)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txttransferir, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtNum2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(104, 104, 104))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(txtResultado, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(61, 61, 61))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -185,26 +178,20 @@ public class CalcMinus extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txttransferir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jlimagem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtNum2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNum1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtResultado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addGap(0, 22, Short.MAX_VALUE))
+                    .addComponent(txtNum2)
+                    .addComponent(txtNum1))
+                .addGap(29, 29, 29)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtResultado, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 34, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        txtResultado.setText(Calc()+"");
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtNum1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNum1KeyPressed
         // TODO add your handling code here:
@@ -216,17 +203,9 @@ public class CalcMinus extends javax.swing.JFrame {
     private void txtNum2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNum2KeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == 10) {
-            jButton1.requestFocus();
             txtResultado.setText(Calc() + "");
         }
     }//GEN-LAST:event_txtNum2KeyPressed
-
-    private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
-        // TODO add your handling code here:
-        if (evt.getKeyCode() == 10) {
-            txtResultado.setText(Calc() + "");
-        }
-    }//GEN-LAST:event_jButton1KeyPressed
 
     private void txtResultadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtResultadoMouseClicked
         // TODO add your handling code here:
@@ -254,6 +233,20 @@ public class CalcMinus extends javax.swing.JFrame {
         // TODO add your handling code here:
         inverteNum();
     }//GEN-LAST:event_jlimagemMouseClicked
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        Timer timer = new Timer(100, new calculoAutomatico());
+        timer.start();
+    }//GEN-LAST:event_formWindowOpened
+
+    private void txttransferirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txttransferirMouseClicked
+        // TODO add your handling code here:
+        String auxiliar;
+        auxiliar = txtNum1.getText();
+        txtNum1.setText(txtNum2.getText());
+        txtNum2.setText(auxiliar);
+    }//GEN-LAST:event_txttransferirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -294,7 +287,6 @@ public class CalcMinus extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -303,5 +295,14 @@ public class CalcMinus extends javax.swing.JFrame {
     private javax.swing.JTextField txtNum1;
     private javax.swing.JTextField txtNum2;
     private javax.swing.JTextField txtResultado;
+    private javax.swing.JLabel txttransferir;
     // End of variables declaration//GEN-END:variables
+class calculoAutomatico implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //To change body of generated methods, choose Tools | Templates.
+            txtResultado.setText("" + Calc());
+        }
+    
+}
 }
