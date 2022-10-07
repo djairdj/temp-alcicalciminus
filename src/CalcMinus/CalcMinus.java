@@ -48,7 +48,7 @@ public class CalcMinus extends javax.swing.JFrame {
             numero1 = converteNumero(txtNum1.getText());
             numero2 = converteNumero(txtNum2.getText());
         }
-        return numero2 - numero1;
+        return Math.abs( numero2 - numero1);
     }
 
     /**
@@ -248,9 +248,6 @@ public class CalcMinus extends javax.swing.JFrame {
         txtNum2.setText(auxiliar);
     }//GEN-LAST:event_txttransferirMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
